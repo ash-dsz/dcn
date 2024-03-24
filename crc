@@ -1,0 +1,99 @@
+ #include <stdio.h>
+#include <string.h>
+
+int main() {
+    char message[50], pattern[50], msg[50], reminder[20];
+    int i, j, msglen, patlen, position, error_flag = 0;
+
+    printf("Enter Message: ");
+    scanf("%s", message);
+    printf("Enter Pattern: ");
+    scanf("%s", pattern);
+
+    msglen = strlen(message);
+    patlen = strlen(pattern);
+
+    if (patlen >= msglen) {
+        printf("Pattern size should be less than Message size. Please re-enter the pattern.\n");
+        return 0;
+    }
+
+    printf("\nGiven Message is: %s\n", message);
+    printf("Given Pattern is: %s\n", pattern);
+    printf("Message size is: %d\n", msglen);
+    printf("Pattern Size is: %d\n", patlen);
+    printf("FCS: %dbit\n", patlen - 1);
+
+    strcpy(msg, message);
+    for (i = 0; i < patlen - 1; i++) {
+        msg[msglen + i] = '0';
+    }
+    msg[msglen + i] = '\0';
+
+    printf("After Appending Q is: %s\n", msg);
+
+    for (i = 0; i < msglen; i++) {
+        if (msg[i] == '1') {
+            for (j = 0; j < patlen; j++) {
+                if (msg[i + j] == pattern[j]) {
+                    msg[i + j] = '0';
+                } else {
+                    msg[i + j] = '1';
+                }
+            }
+        }
+    }
+
+    printf("Remainder R is: %s\n", &msg[msglen]);
+    strcat(message, msg + msglen);
+    printf("Message to be Transmitted T is: %s\n", message);
+
+    char choice;
+    printf("\nDo You Want to Introduce error (Y/N): ");
+    scanf(" %c", &choice);
+
+    if (choice == 'Y' || choice == 'y') {
+        printf("Enter the Position (between 1 to T size): ");
+        scanf("%d", &position);
+        if (position > 0 && position <= strlen(message)) {
+            message[position - 1] = (message[position - 1] == '0') ? '1' : '0';
+        } else {
+            printf("Invalid position.\n");
+            return 0;
+        }
+    }
+
+    printf("\n************RECEIVER************\n");
+    printf("Message received at the Receiver: %s\n", message);
+
+   for (i = 0; i < msglen; i++) {
+    if (message[i] == '1') {
+        for (j = 0; j < patlen; j++) {
+            if (message[i + j] == pattern[j]) {
+                message[i + j] = '0';
+            } else {
+                message[i + j] = '1';
+            }
+        }
+    }
+}
+    strcpy(reminder,message+msglen);
+
+
+    printf("Remainder R is: %s\n", reminder);
+
+    for (i = 0; i < strlen(reminder); i++) {
+        if (reminder[i] == '1') {
+            error_flag = 1;
+            break;
+        }
+    }
+
+    if (error_flag == 1) {
+        printf("\nERROR IN MESSAGE\n");
+    } else {
+        printf("\nNO ERROR IN MESSAGE\n");
+    }
+
+    return 0;
+}
